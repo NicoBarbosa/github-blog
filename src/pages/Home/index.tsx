@@ -1,4 +1,9 @@
-import { DataSectionProfile, ProfileCard, SearchBarContainer } from './styles'
+import {
+  CardsListMain,
+  DataSectionProfile,
+  ProfileCard,
+  SearchBarContainer,
+} from './styles'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import {
@@ -6,6 +11,7 @@ import {
   faBuilding,
   faUserGroup,
 } from '@fortawesome/free-solid-svg-icons'
+import { Card } from './components/Card'
 const profile = 'https://avatars.githubusercontent.com/u/66042022?v=4'
 
 export function Home() {
@@ -51,6 +57,14 @@ export function Home() {
           <input type="search" placeholder="Buscar conteúdo" />
         </form>
       </SearchBarContainer>
+      <CardsListMain>
+        <Card />
+        <Card />
+        <Card />
+        <Card />
+        <Card />
+        <Card />
+      </CardsListMain>
     </>
   )
 }
