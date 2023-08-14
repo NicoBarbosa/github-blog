@@ -12,38 +12,104 @@ import {
   faUserGroup,
 } from '@fortawesome/free-solid-svg-icons'
 import { Card } from './components/Card'
-const profile = 'https://avatars.githubusercontent.com/u/66042022?v=4'
+import { api } from './../../lib/axios'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import * as zod from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+
+interface ProfileGitHubProps {
+  avatar_url: string
+  name: string
+  bio: string
+  login: string
+  company: string | null
+  followers: number
+  html_url: string
+}
+
+interface IssueProps {
+  id: number
+  html_url: string
+  title: string
+  created_at: string
+  body: string
+}
+
+const searchFormSchema = zod.object({
+  query: zod.string(),
+})
+
+type SearchFormIssue = zod.infer<typeof searchFormSchema>
 
 export function Home() {
+  const { register, handleSubmit, reset } = useForm<SearchFormIssue>({
+    resolver: zodResolver(searchFormSchema),
+    defaultValues: {
+      query: ' ',
+    },
+  })
+
+  const [profile, setProfile] = useState({} as ProfileGitHubProps)
+  const [issues, setIssues] = useState([] as IssueProps[])
+  const [counter, setCounter] = useState(0)
+
+  const fetchUserGithub = async () => {
+    const response = await api.get('/users/NicoBarbosa')
+    setProfile(response.data)
+  }
+
+  const fetchIssues = async (query?: string) => {
+    const response = await api.get(
+      `/search/issues?q=${query || ''}%20repo:NicoBarbosa/github-blog`,
+      {
+        params: {
+          sort: 'created',
+          order: 'desc',
+        },
+      },
+    )
+    console.log(response.request)
+    setCounter(response.data.total_count)
+    setIssues(response.data.items)
+  }
+
+  useEffect(() => {
+    fetchUserGithub()
+    fetchIssues()
+  }, [])
+
+  async function handleFetchIssues(data: SearchFormIssue) {
+    await fetchIssues(data.query)
+    reset()
+  }
+
   return (
     <>
       <ProfileCard>
-        <img src={profile} alt="" />
+        <img src={profile.avatar_url} alt={'Foto de' + profile.name} />
         <DataSectionProfile>
           <header>
-            <strong>Nicolas Penante</strong>
-            <a href="#">
+            <strong>{profile.name}</strong>
+            <a href={profile.html_url} target="_blank" rel="noreferrer">
               GitHub
               <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
             </a>
           </header>
-          <p>
-            Tristique volutpat pulvinar vel massa, pellentesque egestas. Eu
-            viverra massa quam dignissim aenean malesuada suscipit. Nunc,
-            volutpat pulvinar vel mass.
-          </p>
+          <p>{profile.bio}</p>
           <div>
             <span>
               <FontAwesomeIcon icon={faGithub} className="iconAwesome" />
-              NicoBarbosa
+              {profile.login}
             </span>
             <span>
               <FontAwesomeIcon icon={faBuilding} className="iconAwesome" />
-              Rocketseat
+              {profile.company != null ? profile.company : 'Sem empresa'}
             </span>
             <span>
               <FontAwesomeIcon icon={faUserGroup} className="iconAwesome" />
-              32 seguidores
+              {profile.followers}{' '}
+              {profile.followers < 2 ? 'seguidor' : 'seguidores'}
             </span>
           </div>
         </DataSectionProfile>
@@ -51,19 +117,29 @@ export function Home() {
       <SearchBarContainer>
         <div>
           <strong>Publicações</strong>
-          <span>6 publicações</span>
+          <span>{counter} publicações</span>
         </div>
-        <form>
-          <input type="search" placeholder="Buscar conteúdo" />
+        <form onSubmit={handleSubmit(handleFetchIssues)}>
+          <input
+            type="search"
+            placeholder="Buscar conteúdo"
+            {...register('query')}
+          />
         </form>
       </SearchBarContainer>
       <CardsListMain>
-        <Card />
-        <Card />
-        <Card />
-        <Card />
-        <Card />
-        <Card />
+        {issues.map((issue) => {
+          const toDateIssueStart = new Date(issue.created_at)
+          return (
+            <Card
+              key={issue.id}
+              issueTitle={issue.title}
+              issueLink={issue.html_url}
+              issueDateStart={toDateIssueStart}
+              description={issue.body}
+            />
+          )
+        })}
       </CardsListMain>
     </>
   )

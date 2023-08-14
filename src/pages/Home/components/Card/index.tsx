@@ -1,17 +1,33 @@
+import { formatDistanceToNow } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
+
 import { CardContainer } from './styles'
 
-export function Card() {
+interface CardContainerProps {
+  issueLink: string
+  issueTitle: string
+  issueDateStart: Date
+  description: string
+}
+
+export function Card({
+  issueLink,
+  issueTitle,
+  issueDateStart,
+  description,
+}: CardContainerProps) {
   return (
-    <CardContainer>
+    <CardContainer href={issueLink}>
       <header>
-        <h2>JavaScript data types and data structures</h2>
-        <span>Há 1 dia</span>
+        <h2>{issueTitle}</h2>
+        <span>
+          {formatDistanceToNow(issueDateStart, {
+            addSuffix: true,
+            locale: ptBR,
+          })}
+        </span>
       </header>
-      <p>
-        Programming languages all have built-in data structures, but these often
-        differ from one language to another. This article attempts to list the
-        built-in data structures available in...
-      </p>
+      <p>{description}</p>
     </CardContainer>
   )
 }

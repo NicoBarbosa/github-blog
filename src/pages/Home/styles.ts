@@ -49,6 +49,10 @@ export const DataSectionProfile = styled.div`
         border-bottom: 1px solid ${(props) => props.theme.blue};
         transition: border-bottom 0.2s ease-in-out;
       }
+
+      &:focus {
+        display: none;
+      }
     }
   }
 

@@ -7,6 +7,7 @@ export const CardContainer = styled.a`
   padding: 2rem;
   line-height: 160%;
   cursor: pointer;
+  text-decoration: none;
 
   &:hover {
     transition: border 0.2s ease-in-out;
