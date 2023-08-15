@@ -1,6 +1,7 @@
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
-export const CardContainer = styled.a`
+export const CardContainer = styled(Link)`
   background: ${(props) => props.theme['base-post']};
   border-radius: 0.625rem;
   border: 2px solid transparent;

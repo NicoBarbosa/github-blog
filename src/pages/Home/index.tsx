@@ -30,7 +30,7 @@ interface ProfileGitHubProps {
 
 interface IssueProps {
   id: number
-  html_url: string
+  number: number
   title: string
   created_at: string
   body: string
@@ -129,13 +129,12 @@ export function Home() {
       </SearchBarContainer>
       <CardsListMain>
         {issues.map((issue) => {
-          const toDateIssueStart = new Date(issue.created_at)
           return (
             <Card
               key={issue.id}
               issueTitle={issue.title}
-              issueLink={issue.html_url}
-              issueDateStart={toDateIssueStart}
+              issueNumber={issue.number}
+              issueDateStart={issue.created_at}
               description={issue.body}
             />
           )

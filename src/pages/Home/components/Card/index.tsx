@@ -1,31 +1,24 @@
-import { formatDistanceToNow } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
-
 import { CardContainer } from './styles'
+import { formatDateDistanceToNow } from '../../../../utils/date'
 
 interface CardContainerProps {
-  issueLink: string
+  issueNumber: number
   issueTitle: string
-  issueDateStart: Date
+  issueDateStart: string
   description: string
 }
 
 export function Card({
-  issueLink,
+  issueNumber,
   issueTitle,
   issueDateStart,
   description,
 }: CardContainerProps) {
   return (
-    <CardContainer href={issueLink}>
+    <CardContainer to={`/issue/${issueNumber}`}>
       <header>
         <h2>{issueTitle}</h2>
-        <span>
-          {formatDistanceToNow(issueDateStart, {
-            addSuffix: true,
-            locale: ptBR,
-          })}
-        </span>
+        <span>{formatDateDistanceToNow(issueDateStart)}</span>
       </header>
       <p>{description}</p>
     </CardContainer>

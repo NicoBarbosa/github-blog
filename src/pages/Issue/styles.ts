@@ -65,26 +65,7 @@ export const PostContent = styled.section`
   padding: 2.5rem 2rem;
   margin-bottom: 8rem;
 
-  div {
-    margin-bottom: 1.5rem;
-  }
-
-  p {
-    line-height: 160%;
-    color: ${(props) => props.theme['base-text']};
-  }
-
-  h2 {
-    color: ${(props) => props.theme.blue};
-    font-size: 1rem;
-    font-weight: 400;
-    text-decoration: underline;
-  }
-
-  pre {
-    width: 100%;
-    padding: 1rem;
-    background-color: ${(props) => props.theme['base-post']};
-    border-radius: 0.125rem;
+  img {
+    max-width: 800px;
   }
 `

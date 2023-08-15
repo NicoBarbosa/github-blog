@@ -7,64 +7,77 @@ import {
   faComment,
 } from '@fortawesome/free-solid-svg-icons'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
+import { api } from '../../lib/axios'
+import { useCallback, useEffect, useState } from 'react'
+import { Link, useParams } from 'react-router-dom'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+
+interface IssueBodyProps {
+  html_url: string
+  title: string
+  user: {
+    login: string
+  }
+  created_at: string
+  comments: string
+  body: string
+}
 
 export function Issue() {
+  const [issue, setIssue] = useState({} as IssueBodyProps)
+
+  const { id } = useParams()
+
+  const fetchUniqueIssue = useCallback(async () => {
+    const response = await api.get(
+      `/repos/NicoBarbosa/github-blog/issues/${id}`,
+    )
+
+    setIssue(response.data)
+  }, [id])
+
+  useEffect(() => {
+    fetchUniqueIssue()
+  }, [fetchUniqueIssue])
+
+  console.log(issue)
+
   return (
     <>
       <PostInfo>
         <header>
-          <a href="#">
+          <Link to={'/'}>
             <FontAwesomeIcon icon={faChevronLeft} />
             Voltar
-          </a>
-          <a href="#">
+          </Link>
+          <a href={issue.html_url} target="_blank" rel="noreferrer">
             Ver no GitHub
             <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
           </a>
         </header>
-        <h1>JavaScript data types and data structures</h1>
+        <h1>{issue.title}</h1>
         <div>
           <span>
             <FontAwesomeIcon icon={faGithub} className="fontAwesomeIcon" />
-            NicoBarbosa
+            {issue.user?.login}
           </span>
           <span>
             <FontAwesomeIcon icon={faCalendarDay} className="fontAwesomeIcon" />
-            Há 1 dia
+            {issue.created_at}
           </span>
           <span>
-            <FontAwesomeIcon icon={faComment} className="fontAwesomeIcon" /> 5
-            comentários
+            <FontAwesomeIcon icon={faComment} className="fontAwesomeIcon" />
+            {`${issue.comments} comentários`}
           </span>
         </div>
       </PostInfo>
       <PostContent>
         <div>
-          <p>
-            <strong>
-              Programming languages all have built-in data structures, but these
-              often differ from one language to another.
-            </strong>
-            This article attempts to list the built-in data structures available
-            in JavaScript and what properties they have. These can be used to
-            build other data structures. Wherever possible, comparisons with
-            other languages are drawn.
-          </p>
-          <h2>Dynamic typing</h2>
-          <p>
-            JavaScript is a loosely typed and dynamic language. Variables in
-            JavaScript are not directly associated with any particular value
-            type, and any variable can be assigned (and re-assigned) values of
-            all types:
-          </p>
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            {issue.body}
+          </ReactMarkdown>
         </div>
-        <pre>
-          let foo = 42; // foo is now a number
-          <br />
-          foo = &apos;bar&apos;; // foo is now a string
-          <br />
-          foo = true; // foo is now a boolean
-        </pre>
       </PostContent>
     </>
   )
