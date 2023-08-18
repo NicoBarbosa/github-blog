@@ -1,32 +1,11 @@
-import {
-  CardsListMain,
-  DataSectionProfile,
-  ProfileCard,
-  SearchBarContainer,
-} from './styles'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faGithub } from '@fortawesome/free-brands-svg-icons'
-import {
-  faArrowUpRightFromSquare,
-  faBuilding,
-  faUserGroup,
-} from '@fortawesome/free-solid-svg-icons'
+import { CardsListMain, SearchBarContainer } from './styles'
 import { Card } from './components/Card'
 import { api } from './../../lib/axios'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import * as zod from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-
-interface ProfileGitHubProps {
-  avatar_url: string
-  name: string
-  bio: string
-  login: string
-  company: string | null
-  followers: number
-  html_url: string
-}
+import { ProfileCard } from './components/ProfileCard'
 
 interface IssueProps {
   id: number
@@ -50,14 +29,8 @@ export function Home() {
     },
   })
 
-  const [profile, setProfile] = useState({} as ProfileGitHubProps)
   const [issues, setIssues] = useState([] as IssueProps[])
   const [counter, setCounter] = useState(0)
-
-  const fetchUserGithub = async () => {
-    const response = await api.get('/users/NicoBarbosa')
-    setProfile(response.data)
-  }
 
   const fetchIssues = async (query?: string) => {
     const response = await api.get(
@@ -75,7 +48,6 @@ export function Home() {
   }
 
   useEffect(() => {
-    fetchUserGithub()
     fetchIssues()
   }, [])
 
@@ -86,34 +58,7 @@ export function Home() {
 
   return (
     <>
-      <ProfileCard>
-        <img src={profile.avatar_url} alt={'Foto de' + profile.name} />
-        <DataSectionProfile>
-          <header>
-            <strong>{profile.name}</strong>
-            <a href={profile.html_url} target="_blank" rel="noreferrer">
-              GitHub
-              <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-            </a>
-          </header>
-          <p>{profile.bio}</p>
-          <div>
-            <span>
-              <FontAwesomeIcon icon={faGithub} className="iconAwesome" />
-              {profile.login}
-            </span>
-            <span>
-              <FontAwesomeIcon icon={faBuilding} className="iconAwesome" />
-              {profile.company != null ? profile.company : 'Sem empresa'}
-            </span>
-            <span>
-              <FontAwesomeIcon icon={faUserGroup} className="iconAwesome" />
-              {profile.followers}{' '}
-              {profile.followers < 2 ? 'seguidor' : 'seguidores'}
-            </span>
-          </div>
-        </DataSectionProfile>
-      </ProfileCard>
+      <ProfileCard />
       <SearchBarContainer>
         <div>
           <strong>Publicações</strong>
